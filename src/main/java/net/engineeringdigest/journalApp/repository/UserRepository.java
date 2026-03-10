@@ -9,6 +9,8 @@ public interface UserRepository extends MongoRepository<User, ObjectId> {
     User findByUsername(String username);
     //yaha hum user find karnge uske UserName se.
 
+    void deleteByUsername(String username);
+
 
 
 

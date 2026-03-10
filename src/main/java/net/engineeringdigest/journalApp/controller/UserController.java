@@ -1,5 +1,6 @@
 package net.engineeringdigest.journalApp.controller;
 import net.engineeringdigest.journalApp.entity.User;
+import net.engineeringdigest.journalApp.repository.UserRepository;
 import net.engineeringdigest.journalApp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,11 @@ import java.util.List;
 public class UserController {
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserRepository userRepository;
+
+
 
     @GetMapping   //We can get all details.
     public List<User> getAllUsers(){   //getAllUsers kya dega? -> It will provide list of users List<User>
@@ -36,13 +42,10 @@ public class UserController {
         userService.saveEntry(userInDb);
         return new ResponseEntity<>("User Not Found",HttpStatus.NO_CONTENT);
     }
-    @DeleteMapping("/{username}")
-    public ResponseEntity<?> deleteUser(@PathVariable String username) {
-        User userInDb = userService.findByUserName(username);
-        if (userInDb != null) {
-            userService.deleteById(userInDb.getId());
-            return ResponseEntity.ok("User Deleted");
-        }
-        return new ResponseEntity<>("User Not Found", HttpStatus.NO_CONTENT);
+    @DeleteMapping
+    public ResponseEntity<?> deleteUserById() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        userRepository.deleteByUsername(authentication.getName());
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
